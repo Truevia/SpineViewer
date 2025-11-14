@@ -35,13 +35,24 @@ bool SpineManager::loadSpine(const std::string& atlasPath, const std::string& sk
         dispose();
         return false;
     }
-    
+
+#if SPINE_MAJOR_VERSION == 3
+    _atlasAttachmentLoader = new (__FILE__, __LINE__) Cocos2dAtlasAttachmentLoader(atlas);
+#endif
     /* .json / .skel */
     if (skelPath.find(".json") != std::string::npos) {
+#if SPINE_MAJOR_VERSION == 3
+        SkeletonJson json(_atlasAttachmentLoader);
+#else
         SkeletonJson json(atlas);
+#endif
         skeletonData = json.readSkeletonDataFile(skelPath.c_str());
     } else {
+#if SPINE_MAJOR_VERSION == 3
+        SkeletonBinary binary(_atlasAttachmentLoader);
+#else
         SkeletonBinary binary(atlas);
+#endif
         skeletonData = binary.readSkeletonDataFile(skelPath.c_str());
     }
     if (!skeletonData) {
@@ -68,7 +79,7 @@ bool SpineManager::loadSpine(const std::string& atlasPath, const std::string& sk
     skeleton->setScaleX(scalex);
     skeleton->setScaleY(scaley);
 
-    const auto &animations = skeletonData->getAnimations();
+    auto &animations = skeletonData->getAnimations();
     std::cout << "Loaded " << animations.size() << " animations:" << std::endl;
     for (int i = 0; i < animations.size(); i++)
     {
@@ -108,7 +119,11 @@ void SpineManager::update(float delta) {
         animationState->update(delta);
         animationState->apply(*skeleton);
         skeleton->update(delta);
-        skeleton->updateWorldTransform(spine::Physics_Update);
+#if SPINE_MAJOR_VERSION >= 4
+       skeleton->updateWorldTransform(spine::Physics_Update);
+#else
+        skeleton->updateWorldTransform();
+#endif
 
         spinePosX = skeleton->getX();
         spinePosY = skeleton->getY();

@@ -191,7 +191,10 @@ int main(int, char**)
 
 	// Create the spine manager and load default animation
 	g_spineManager = new SpineManager();
-	g_spineManager->loadSpine("data/spineboy-pma.atlas", "data/spineboy-pro.skel");
+    
+    
+//	g_spineManager->loadSpine("data/spineboy-pma.atlas", "data/spineboy-pro.skel");
+    g_spineManager->loadSpine("/opt/b/SpineViewer/data38/spineboy.atlas", "/opt/b/SpineViewer/data38/spineboy-pro.json");
 
 
     double lastTime = glfwGetTime();

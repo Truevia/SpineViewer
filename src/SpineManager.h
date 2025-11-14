@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "spine/spine.h"
+#include "spine/Version.h"
 #include "spine-glfw.h"
 
 using namespace std;
@@ -30,6 +31,10 @@ private:
     AnimationStateData *animationStateData;
     AnimationState *animationState;
     GlTextureLoader *textureLoader;
+    
+#if SPINE_MAJOR_VERSION == 3
+    Cocos2dAtlasAttachmentLoader *_atlasAttachmentLoader = nullptr;
+#endif
     
 public:
     SpineManager();

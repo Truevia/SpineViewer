@@ -34,6 +34,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "spine/Version.h"
+
 //using namespace gl;
 using namespace spine;
 
@@ -254,7 +256,13 @@ void matrix_ortho_projection(float *matrix, float width, float height) {
 }
 
 void GlTextureLoader::load(spine::AtlasPage &page, const spine::String &path) {
+#if SPINE_MAJOR_VERSION >= 4
     page.texture = (void *) (uintptr_t) texture_load(path.buffer());
+#else
+    void *texture = (void *) (uintptr_t) texture_load(path.buffer());
+    page.setRendererObject(texture);
+    page.texturePath = path.buffer();
+#endif
 }
 
 void GlTextureLoader::unload(void *texture) {

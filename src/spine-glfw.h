@@ -31,6 +31,11 @@
 
 #include <stdint.h>
 #include <spine/spine.h>
+#include "spine/Version.h"
+
+#if SPINE_MAJOR_VERSION == 3
+#include "SkeletonRenderer.h"
+#endif
 
 /// A vertex of a mesh generated from a Spine skeleton
 struct vertex_t {
