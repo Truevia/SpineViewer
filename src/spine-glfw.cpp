@@ -261,7 +261,9 @@ void GlTextureLoader::load(spine::AtlasPage &page, const spine::String &path) {
 #else
     void *texture = (void *) (uintptr_t) texture_load(path.buffer());
     page.setRendererObject(texture);
+#if SPINE_MAJOR_VERSION == 3 && SPINE_MINOR_VERSION == 8
     page.texturePath = path.buffer();
+#endif
 #endif
 }
 

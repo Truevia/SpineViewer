@@ -194,7 +194,7 @@ int main(int, char**)
     
     
 //	g_spineManager->loadSpine("data/spineboy-pma.atlas", "data/spineboy-pro.skel");
-    g_spineManager->loadSpine("/opt/b/SpineViewer/data38/spineboy.atlas", "/opt/b/SpineViewer/data38/spineboy-pro.json");
+//    g_spineManager->loadSpine("./data37/spineboy.atlas", "./data37/spineboy-pro.json");
 
 
     double lastTime = glfwGetTime();
