@@ -76,7 +76,7 @@ for k,version in ipairs(spine_versions) do
         }
 
         -- // include glfw
-        includedirs { "vendor/glfw/include", "vendor/imgui" }
+        includedirs { "vendor/glfw/include", "vendor/imgui", "vendor/imgui/backends" }
         filter "system:macosx"
             libdirs { "vendor/glfw/lib" }
             links { "Cocoa.framework", "OpenGL.framework", "IOKit.framework", "CoreVideo.framework", "glfw3" }
