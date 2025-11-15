@@ -14,15 +14,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install premake
-        shell: pwsh
-        run: |
-          choco install premake --yes --no-progress
-
       - name: Generate Visual Studio solution
         shell: pwsh
         run: |
-          premake5 --file=premake5.lua vs2019
+          $premake = Join-Path "$env:GITHUB_WORKSPACE" "tools/premake5.exe"
+          & $premake --file=premake5.lua vs2019
 
       - name: Build every SpineViewer target (Release x64)
         shell: pwsh
