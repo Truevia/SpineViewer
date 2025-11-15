@@ -1,0 +1,62 @@
+name: Build SpineViewer binaries
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install premake
+        run: |
+          brew update
+          brew install premake
+
+      - name: Generate Xcode workspace
+        run: premake5 --file=premake5.lua xcode4
+
+      - name: Build every SpineViewer target
+        run: |
+          set -euo pipefail
+          versions=("2.1.25" "2.1.08" "4.2" "3.7.94" "3.7" "3.8" "3.6.53")
+          mkdir -p artifacts
+          for version in "${versions[@]}"; do
+            scheme="SpineViewer${version}"
+            echo "Building ${scheme}"
+            xcodebuild \
+              -workspace build/SpineViewerProject.xcworkspace \
+              -scheme "${scheme}" \
+              -configuration Release \
+              -derivedDataPath build/derived \
+              build
+            release_dir="build/derived/Build/Products/Release"
+            binary_base="${release_dir}/${scheme}"
+            if [ -d "${binary_base}.app" ]; then
+              cp -R "${binary_base}.app" "artifacts/${scheme}.app"
+            elif [ -f "${binary_base}" ]; then
+              cp "${binary_base}" "artifacts/${scheme}"
+            else
+              echo "Unable to locate build product for ${scheme}"
+              ls -R "${release_dir}"
+              exit 1
+            fi
+          done
+
+      - name: Create archive
+        run: |
+          cd artifacts
+          zip -r ../SpineViewer-binaries.zip .
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: spineviewer-binaries
+          path: SpineViewer-binaries.zip
+          if-no-files-found: error
