@@ -31,7 +31,6 @@ jobs:
         run: |
           $ErrorActionPreference = "Stop"
           $versions = @("2.1.25", "2.1.08", "4.2", "3.7.94", "3.7", "3.8", "3.6.53")
-          $solution = "projects/SpineViewerProject.sln"
           $vswhere = Join-Path ${env:ProgramFiles(x86)} "Microsoft Visual Studio/Installer/vswhere.exe"
           if (!(Test-Path $vswhere)) {
             throw "vswhere.exe not found at $vswhere"
@@ -43,8 +42,12 @@ jobs:
           $msbuildPath = $msbuildPath.Trim()
           foreach ($version in $versions) {
             $project = "SpineViewer$version"
+            $projectFile = Join-Path "projects" ("$project.vcxproj")
+            if (!(Test-Path $projectFile)) {
+              throw "Project file not found: $projectFile"
+            }
             Write-Host "Building $project"
-            & $msbuildPath $solution /m /p:Configuration=Release /p:Platform=Win32 /t:$project
+            & $msbuildPath $projectFile /m /p:Configuration=Release /p:Platform=Win32
           }
 
       - name: Collect build artifacts
