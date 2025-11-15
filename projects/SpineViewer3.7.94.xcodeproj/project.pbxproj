@@ -131,6 +131,7 @@
 		66E678A1C0E78F93882E86E1 /* RTTI.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = RTTI.cpp; path = "../vendor/spine-cpp3.7.94/spine-cpp/src/spine/RTTI.cpp"; sourceTree = "<group>"; };
 		687F51D9B5E2480B2C014819 /* spine-glfw.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "spine-glfw.cpp"; path = "../src/spine-glfw.cpp"; sourceTree = "<group>"; };
 		69B5F71B7A02DB0D77EFA55B /* SkeletonBounds.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SkeletonBounds.cpp; path = "../vendor/spine-cpp3.7.94/spine-cpp/src/spine/SkeletonBounds.cpp"; sourceTree = "<group>"; };
+		6F27B43C90F3616ECDA88A7C /* SpineViewer3.7.94.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = SpineViewer3.7.94.app; path = SpineViewer3.7.94.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7554286975155DDBDB9C06A9 /* PathConstraintMixTimeline.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PathConstraintMixTimeline.cpp; path = "../vendor/spine-cpp3.7.94/spine-cpp/src/spine/PathConstraintMixTimeline.cpp"; sourceTree = "<group>"; };
 		75E00E550B56CD8779F32495 /* SpineManager.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = SpineManager.cpp; path = ../src/SpineManager.cpp; sourceTree = "<group>"; };
 		763093BD9BD88E2FBA0911FD /* TransformConstraint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TransformConstraint.cpp; path = "../vendor/spine-cpp3.7.94/spine-cpp/src/spine/TransformConstraint.cpp"; sourceTree = "<group>"; };
@@ -143,7 +144,6 @@
 		887B4E454A33DFB7F14EAC85 /* TranslateTimeline.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TranslateTimeline.cpp; path = "../vendor/spine-cpp3.7.94/spine-cpp/src/spine/TranslateTimeline.cpp"; sourceTree = "<group>"; };
 		8AE06D65698308D71E650BA5 /* Atlas.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Atlas.cpp; path = "../vendor/spine-cpp3.7.94/spine-cpp/src/spine/Atlas.cpp"; sourceTree = "<group>"; };
 		8D6BC6AA50D7885C8F7B2CEA /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		8EA5152DD715F95F1BB4CB6D /* SpineViewer3.7.94 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = SpineViewer3.7.94; path = SpineViewer3.7.94; sourceTree = BUILT_PRODUCTS_DIR; };
 		90D43DD5B29FEB07EF551415 /* glad.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = glad.c; path = ../vendor/glad/src/glad.c; sourceTree = "<group>"; };
 		92CE508BC64D8FFDDE476ECB /* TextureLoader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = TextureLoader.cpp; path = "../vendor/spine-cpp3.7.94/spine-cpp/src/spine/TextureLoader.cpp"; sourceTree = "<group>"; };
 		931E4DAFED1F64A1B4665BEF /* Json.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = Json.cpp; path = "../vendor/spine-cpp3.7.94/spine-cpp/src/spine/Json.cpp"; sourceTree = "<group>"; };
@@ -183,7 +183,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		E2497C1DF95C174FE978125D /* Frameworks */ = {
+		1490EBAC5D01CFDEA1A0A1EC /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -197,7 +197,7 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		706447C9968A777BFD916E09 /* Embed Libraries */ = {
+		5245D7187A808FCA621C1D58 /* Embed Libraries */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
@@ -370,7 +370,7 @@
 		A6C936B49B3FADE6EA134CF4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8EA5152DD715F95F1BB4CB6D /* SpineViewer3.7.94 */,
+				6F27B43C90F3616ECDA88A7C /* SpineViewer3.7.94.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -425,24 +425,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		A9587B739444A165DC2A69B3 /* SpineViewer3.7.94 */ = {
+		C76BF4A2F6FDC394D20B02E2 /* SpineViewer3.7.94 */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = D084C47CE7975FAED7B35ABC /* Build configuration list for PBXNativeTarget "SpineViewer3.7.94" */;
+			buildConfigurationList = 02CC340B4B3D183D8FDBEA4B /* Build configuration list for PBXNativeTarget "SpineViewer3.7.94" */;
 			buildPhases = (
-				5230FCBD694397EF595F92FD /* Resources */,
-				BBDE1614D2F0B146C30CAC54 /* Sources */,
-				E2497C1DF95C174FE978125D /* Frameworks */,
-				706447C9968A777BFD916E09 /* Embed Libraries */,
+				84786C4CCCE9507E1188228C /* Resources */,
+				EE2585A3369669D57B353BE3 /* Sources */,
+				1490EBAC5D01CFDEA1A0A1EC /* Frameworks */,
+				5245D7187A808FCA621C1D58 /* Embed Libraries */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = SpineViewer3.7.94;
-			productInstallPath = "$(HOME)/bin";
+			productInstallPath = "$(HOME)/Applications";
 			productName = SpineViewer3.7.94;
-			productReference = 8EA5152DD715F95F1BB4CB6D /* SpineViewer3.7.94 */;
-			productType = "com.apple.product-type.tool";
+			productReference = 6F27B43C90F3616ECDA88A7C /* SpineViewer3.7.94.app */;
+			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
@@ -456,13 +456,13 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A9587B739444A165DC2A69B3 /* SpineViewer3.7.94 */,
+				C76BF4A2F6FDC394D20B02E2 /* SpineViewer3.7.94.app */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		5230FCBD694397EF595F92FD /* Resources */ = {
+		84786C4CCCE9507E1188228C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -472,7 +472,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		BBDE1614D2F0B146C30CAC54 /* Sources */ = {
+		EE2585A3369669D57B353BE3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -558,6 +558,29 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		0E08648BDC2BB83D633A0ACB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = (
+					YES,
+				);
+				CONFIGURATION_BUILD_DIR = bin/Release;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GENERATE_INFOPLIST_FILE = (
+					YES,
+				);
+				INSTALL_PATH = "\"$(HOME)/Applications\"";
+				MACOSX_DEPLOYMENT_TARGET = (
+					11.0,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = (
+					com.trve.SpineViewer3.7.94,
+				);
+				PRODUCT_NAME = SpineViewer3.7.94;
+			};
+			name = Release;
+		};
 		2FD3E33355FA12E5BD010973 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -579,13 +602,22 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = (
+					YES,
+				);
 				LIBRARY_SEARCH_PATHS = (
 					../vendor/glfw/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = (
+					11.0,
 				);
 				OBJROOT = obj/Debug/SpineViewer3.7.94;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"-lglfw3",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = (
+					com.trve.SpineViewer3.7.94,
 				);
 				SYMROOT = bin/Debug;
 				USER_HEADER_SEARCH_PATHS = (
@@ -597,20 +629,6 @@
 					../vendor/imgui,
 					../vendor/glad/include,
 				);
-			};
-			name = Debug;
-		};
-		3397734280FA6974F7196982 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = (
-					YES,
-				);
-				CONFIGURATION_BUILD_DIR = bin/Debug;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_DYNAMIC_NO_PIC = NO;
-				INSTALL_PATH = /usr/local/bin;
-				PRODUCT_NAME = SpineViewer3.7.94;
 			};
 			name = Debug;
 		};
@@ -633,13 +651,22 @@
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = (
+					YES,
+				);
 				LIBRARY_SEARCH_PATHS = (
 					../vendor/glfw/lib,
+				);
+				MACOSX_DEPLOYMENT_TARGET = (
+					11.0,
 				);
 				OBJROOT = obj/Release/SpineViewer3.7.94;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-lglfw3",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = (
+					com.trve.SpineViewer3.7.94,
 				);
 				SYMROOT = bin/Release;
 				USER_HEADER_SEARCH_PATHS = (
@@ -654,37 +681,46 @@
 			};
 			name = Release;
 		};
-		BE0466BCEFFDB16E69DCECFC /* Release */ = {
+		9393B151290A708397A6C791 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = (
 					YES,
 				);
-				CONFIGURATION_BUILD_DIR = bin/Release;
+				CONFIGURATION_BUILD_DIR = bin/Debug;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_DYNAMIC_NO_PIC = NO;
-				INSTALL_PATH = /usr/local/bin;
+				GENERATE_INFOPLIST_FILE = (
+					YES,
+				);
+				INSTALL_PATH = "\"$(HOME)/Applications\"";
+				MACOSX_DEPLOYMENT_TARGET = (
+					11.0,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = (
+					com.trve.SpineViewer3.7.94,
+				);
 				PRODUCT_NAME = SpineViewer3.7.94;
 			};
-			name = Release;
+			name = Debug;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		02CC340B4B3D183D8FDBEA4B /* Build configuration list for PBXNativeTarget "SpineViewer3.7.94.app" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9393B151290A708397A6C791 /* Debug */,
+				0E08648BDC2BB83D633A0ACB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		1DEB928908733DD80010E9CD /* Build configuration list for PBXProject "SpineViewer3.7.94" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2FD3E33355FA12E5BD010973 /* Debug */,
 				68C1562DB1323A5FF5D10C6D /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Debug;
-		};
-		D084C47CE7975FAED7B35ABC /* Build configuration list for PBXNativeTarget "SpineViewer3.7.94" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3397734280FA6974F7196982 /* Debug */,
-				BE0466BCEFFDB16E69DCECFC /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
