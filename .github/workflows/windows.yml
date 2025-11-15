@@ -1,0 +1,71 @@
+name: Build SpineViewer Windows binaries
+
+on:
+  push:
+    tags:
+      - '*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install premake
+        shell: pwsh
+        run: |
+          choco install premake --yes --no-progress
+
+      - name: Generate Visual Studio solution
+        shell: pwsh
+        run: |
+          premake5 --file=premake5.lua vs2019
+
+      - name: Build every SpineViewer target (Release x64)
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $versions = @("2.1.25", "2.1.08", "4.2", "3.7.94", "3.7", "3.8", "3.6.53")
+          $solution = "projects/SpineViewerProject.sln"
+          foreach ($version in $versions) {
+            $project = "SpineViewer$version"
+            Write-Host "Building $project"
+            msbuild $solution /m /p:Configuration=Release /p:Platform=x64 /t:$project
+          }
+
+      - name: Collect build artifacts
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = "Stop"
+          $versions = @("2.1.25", "2.1.08", "4.2", "3.7.94", "3.7", "3.8", "3.6.53")
+          $outputRoot = "projects/bin/Release"
+          New-Item -ItemType Directory -Force -Path artifacts | Out-Null
+          foreach ($version in $versions) {
+            $exePath = Join-Path $outputRoot "SpineViewer$version.exe"
+            if (!(Test-Path $exePath)) {
+              Write-Host "Contents of projects/bin/Release:" 
+              Get-ChildItem $outputRoot -Recurse || $true
+              throw "Unable to locate $exePath"
+            }
+            $targetDir = Join-Path "artifacts" "SpineViewer$version"
+            New-Item -ItemType Directory -Force -Path $targetDir | Out-Null
+            Copy-Item $exePath -Destination $targetDir -Force
+          }
+
+      - name: Create archive
+        shell: pwsh
+        run: |
+          if (Test-Path SpineViewer-windows.zip) {
+            Remove-Item SpineViewer-windows.zip -Force
+          }
+          Compress-Archive -Path artifacts\* -DestinationPath SpineViewer-windows.zip
+
+      - name: Upload binaries
+        uses: actions/upload-artifact@v4
+        with:
+          name: spineviewer-windows
+          path: SpineViewer-windows.zip
+          if-no-files-found: error
