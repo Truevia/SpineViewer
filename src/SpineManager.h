@@ -51,6 +51,8 @@ public:
     void setScaleX(float x);
 
     void setScaleY(float y);
+
+    void setTimeScale(float scale);
     
     void dispose();
     

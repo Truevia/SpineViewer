@@ -301,9 +301,9 @@ int main(int, char**)
                 g_spineManager->setY(g_spineManager->spinePosY);
             }
 
-            if (ImGui::DragFloat("TimeScale", &g_spineManager->spineEntryTimeScale, 0.01, -3.0, 3.0))
+            if (ImGui::DragFloat("TimeScale", &g_spineManager->spineEntryTimeScale, 0.01f, -3.0f, 3.0f))
             {
-
+                g_spineManager->setTimeScale(g_spineManager->spineEntryTimeScale);
             }
             ImGui::ColorEdit4("clear color", (float*)&clear_color); // Edit 3 floats representing a color
             ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);

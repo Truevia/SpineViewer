@@ -158,6 +158,22 @@ void SpineManager::setScaleY(float y)
         skeleton->setScaleY(y);
     }
 }
+
+void SpineManager::setTimeScale(float scale)
+{
+    spineEntryTimeScale = scale;
+    if (!animationState) {
+        return;
+    }
+
+    Vector<TrackEntry*>& tracks = animationState->getTracks();
+    for (size_t i = 0; i < tracks.size(); ++i) {
+        TrackEntry* entry = tracks[i];
+        if (entry) {
+            entry->setTimeScale(scale);
+        }
+    }
+}
     
 void SpineManager::dispose()
 {
