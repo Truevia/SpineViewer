@@ -1,7 +1,15 @@
 # SpineViewer
 
 
-![](misc/screenshot.png)
+![4.2](misc/screenshot.png)
+
+## How to code
+
+```
+#macos
+premake5 --file=premake5.lua xcode4
+open build/SpineViewerProject.xcworkspace
+```
 
 Base on:
 

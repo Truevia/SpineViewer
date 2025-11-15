@@ -120,6 +120,7 @@
 		5737E92B6E4A845D5E667F6B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = main.cpp; path = ../src/main.cpp; sourceTree = "<group>"; };
 		5959C4FCCC5E262E30D11B3C /* PathConstraintPositionTimeline.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PathConstraintPositionTimeline.cpp; path = "../vendor/spine-cpp3.7/spine-cpp/src/spine/PathConstraintPositionTimeline.cpp"; sourceTree = "<group>"; };
 		59FF5274B55F7726F7A318B4 /* ShearTimeline.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = ShearTimeline.cpp; path = "../vendor/spine-cpp3.7/spine-cpp/src/spine/ShearTimeline.cpp"; sourceTree = "<group>"; };
+		5A051DFF59A8013193FCB43F /* BlockAllocator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = BlockAllocator.h; path = "../vendor/spine-cpp3.7/BlockAllocator.h"; sourceTree = "<group>"; };
 		5D58A872B8A3F8A4A6D5DEB2 /* IkConstraint.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = IkConstraint.cpp; path = "../vendor/spine-cpp3.7/spine-cpp/src/spine/IkConstraint.cpp"; sourceTree = "<group>"; };
 		606C44802E8F9832B59DEAC0 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		6291326EF2870D20AF7BB8AE /* PathConstraintMixTimeline.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = PathConstraintMixTimeline.cpp; path = "../vendor/spine-cpp3.7/spine-cpp/src/spine/PathConstraintMixTimeline.cpp"; sourceTree = "<group>"; };
@@ -274,6 +275,7 @@
 		6A26FB539B0AF345AE232993 /* spine-cpp3.7 */ = {
 			isa = PBXGroup;
 			children = (
+				5A051DFF59A8013193FCB43F /* BlockAllocator.h */,
 				E2218AD57C4580072C6B6115 /* SkeletonRenderer.cpp */,
 				352F4BDF451478113188021F /* SkeletonRenderer.h */,
 				2A6F8699F892DA4B7FA12CD9 /* spine-cpp */,
