@@ -40,6 +40,10 @@ jobs:
               CONFIGURATION_BUILD_DIR="${build_dir}" \
               -derivedDataPath build/derived \
               build
+            echo "--- Contents of ${build_dir} ---"
+            ls -al "${build_dir}" || true
+            echo "--- Contents of derived Release products ---"
+            ls -al build/derived/Build/Products/Release || true
             candidates=(
               "${build_dir}/${scheme}"
               "${build_dir}/${scheme}.app"
@@ -52,16 +56,20 @@ jobs:
             for candidate in "${candidates[@]}"; do
               if [ -d "${candidate}" ]; then
                 cp -R "${candidate}" "${target_dir}/"
+                  echo "Copied directory ${candidate} -> ${target_dir}"
                 copied=true
                 break
               elif [ -f "${candidate}" ]; then
                 cp "${candidate}" "${target_dir}/"
+                  echo "Copied file ${candidate} -> ${target_dir}"
                 copied=true
                 break
               fi
             done
             if [ "${copied}" != true ]; then
               echo "Unable to locate build product for ${scheme}" >&2
+                echo "Listing build/bin recursively for diagnostics"
+                ls -R build/bin || true
               find build -maxdepth 4 -type d -name "Release*" -print || true
               exit 1
             fi
