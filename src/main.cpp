@@ -126,6 +126,7 @@ int main(int, char**)
 #endif
 
     // Create window with graphics context
+    glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE); // must come before glfwCreateWindow
     float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor()); // Valid on GLFW 3.3+ only
     GLFWwindow* window = glfwCreateWindow((int)(width * main_scale), (int)(height * main_scale), "SpineViewer", nullptr, nullptr);
     if (window == nullptr)
