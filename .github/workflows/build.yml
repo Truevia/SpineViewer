@@ -36,15 +36,27 @@ jobs:
               -configuration Release \
               -derivedDataPath build/derived \
               build
-            release_dir="build/derived/Build/Products/Release"
-            binary_base="${release_dir}/${scheme}"
-            if [ -d "${binary_base}.app" ]; then
-              cp -R "${binary_base}.app" "artifacts/${scheme}.app"
-            elif [ -f "${binary_base}" ]; then
-              cp "${binary_base}" "artifacts/${scheme}"
-            else
-              echo "Unable to locate build product for ${scheme}"
-              ls -R "${release_dir}"
+            candidates=(
+              "build/bin/Release/${scheme}"
+              "build/bin/Release/${scheme}.app"
+              "build/derived/Build/Products/Release/${scheme}"
+              "build/derived/Build/Products/Release/${scheme}.app"
+            )
+            copied=false
+            for candidate in "${candidates[@]}"; do
+              if [ -d "${candidate}" ]; then
+                cp -R "${candidate}" "artifacts/${scheme}.app"
+                copied=true
+                break
+              elif [ -f "${candidate}" ]; then
+                cp "${candidate}" "artifacts/${scheme}"
+                copied=true
+                break
+              fi
+            done
+            if [ "${copied}" != true ]; then
+              echo "Unable to locate build product for ${scheme}" >&2
+              find build -maxdepth 3 -type d -name Release -print || true
               exit 1
             fi
           done
