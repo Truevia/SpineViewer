@@ -3,7 +3,7 @@ workspace "SpineViewerProject"
     configurations { "Debug", "Release" }
     location "build"
 
-spine_versions = { "3.7", "3.8", "4.2", "2.1.25" }
+spine_versions = { "3.7", "3.8", "4.2", "2.1.25", "2.1.08" }
 for k,version in ipairs(spine_versions) do
 
     project_name = "SpineViewer" .. version
@@ -23,7 +23,13 @@ for k,version in ipairs(spine_versions) do
         -- [[
         -- spine 3.8
         local spineVersion = version
-        if version == '2.1.25' then
+        -- get spine-cpp version from spine version
+        local version_parts = {}
+        for part in string.gmatch(spineVersion, "[^%.]+") do
+            table.insert(version_parts, part)
+        end
+        local version_major = version_parts[1]
+        if version_major == '2' then
             includedirs {
                 "vendor/spine-c"..spineVersion.."/include",
                 "vendor/spine-c"..spineVersion,

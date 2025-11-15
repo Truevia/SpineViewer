@@ -1,4 +1,4 @@
-#include "spine-cocos2dx.h"
+#include "spine-opengl.h"
 
 #include <spine/extension.h>
 #include <glad/glad.h>

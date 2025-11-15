@@ -1,0 +1,10 @@
+
+#ifndef SPINE_VERSION_H_
+#define SPINE_VERSION_H_
+
+#define SPINE_MAJOR_VERSION 2
+#define SPINE_MINOR_VERSION 1
+#define SPINE_PATCH_VERSION 8
+#define SPINE_VERSION_STRING "2.1.08"
+
+#endif

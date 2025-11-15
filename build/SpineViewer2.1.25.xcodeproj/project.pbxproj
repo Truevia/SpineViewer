@@ -42,8 +42,8 @@
 		C95A834E7D569C805F08D98E /* IkConstraintData.c in Sources */ = {isa = PBXBuildFile; fileRef = DAA2BCF674FCA5E8B1350B36 /* IkConstraintData.c */; };
 		D14A54334532CBE567807A73 /* imgui_tables.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D059039B96E6FB0D04E921DB /* imgui_tables.cpp */; };
 		D444494C482CC0FE6A7A6F8C /* Event.c in Sources */ = {isa = PBXBuildFile; fileRef = F0A3A314B7319A862533C154 /* Event.c */; };
-		DA9CF425C80486D764FE7A65 /* spine-cocos2dx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 52A0520D5F2B047FDA0FD04D /* spine-cocos2dx.cpp */; };
 		DE63372478872C5628AD0D64 /* BoneData.c in Sources */ = {isa = PBXBuildFile; fileRef = B3C5B86C281FFD5EA60386AC /* BoneData.c */; };
+		E47F14A597751E57E8977AE5 /* spine-opengl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 80AEE48D74AE2DFFF99942CD /* spine-opengl.cpp */; };
 		F320AFECF2C3931E2D18462C /* Slot.c in Sources */ = {isa = PBXBuildFile; fileRef = 6E8134B4C5E6A7A677F4C2F4 /* Slot.c */; };
 		F8E8DBA28B76A594F44F49E2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D6BC6AA50D7885C8F7B2CEA /* Cocoa.framework */; };
 		F9F1B012F2BC6FC47D30D652 /* AtlasAttachmentLoader.c in Sources */ = {isa = PBXBuildFile; fileRef = C341047AF6C043EC0EBA22BA /* AtlasAttachmentLoader.c */; };
@@ -58,11 +58,11 @@
 		100CAF9309CE6C0543CD6DD3 /* imconfig.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = imconfig.h; path = ../vendor/imgui/imconfig.h; sourceTree = "<group>"; };
 		13531446A97C26386AE28286 /* AnimationStateData.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = AnimationStateData.c; path = "../vendor/spine-c2.1.25/src/spine/AnimationStateData.c"; sourceTree = "<group>"; };
 		19352E0A6698243CDCB7244A /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
-		1AF08B370EEFD4A993DAE977 /* spine-cocos2dx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "spine-cocos2dx.h"; path = "../vendor/spine-c2.1.25/spine-cocos2dx.h"; sourceTree = "<group>"; };
 		1DC2071C2F79470EA4E7355C /* MeshAttachment.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = MeshAttachment.c; path = "../vendor/spine-c2.1.25/src/spine/MeshAttachment.c"; sourceTree = "<group>"; };
 		1F219409E1E1F47B3F16D249 /* PolygonBatch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PolygonBatch.h; path = "../vendor/spine-c2.1.25/PolygonBatch.h"; sourceTree = "<group>"; };
 		1F955C22108CCA147C904A62 /* Attachment.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Attachment.c; path = "../vendor/spine-c2.1.25/src/spine/Attachment.c"; sourceTree = "<group>"; };
 		20B9AD00692A9132ADC96340 /* SpineViewer2.1.25 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; name = SpineViewer2.1.25; path = SpineViewer2.1.25; sourceTree = BUILT_PRODUCTS_DIR; };
+		256BE077E82C40E945611EB7 /* spine-opengl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "spine-opengl.h"; path = "../vendor/spine-c2.1.25/spine-opengl.h"; sourceTree = "<group>"; };
 		2DBEF673CFA89265C6CFA4B3 /* imgui_widgets.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_widgets.cpp; path = ../vendor/imgui/imgui_widgets.cpp; sourceTree = "<group>"; };
 		3AFE29E12865BC93C55FB021 /* imgui_impl_opengl3.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_impl_opengl3.cpp; path = ../vendor/imgui/backends/imgui_impl_opengl3.cpp; sourceTree = "<group>"; };
 		3CADFD30D707E62213404B70 /* AttachmentLoader.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = AttachmentLoader.c; path = "../vendor/spine-c2.1.25/src/spine/AttachmentLoader.c"; sourceTree = "<group>"; };
@@ -74,12 +74,12 @@
 		434C746FB07482E1B20772AF /* imgui_demo.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_demo.cpp; path = ../vendor/imgui/imgui_demo.cpp; sourceTree = "<group>"; };
 		48CDC6DB58B2F30D45267D1B /* imgui_impl_glfw.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = imgui_impl_glfw.h; path = ../vendor/imgui/backends/imgui_impl_glfw.h; sourceTree = "<group>"; };
 		4BEE7F5AC048C44C3E2C4D9A /* Skeleton.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Skeleton.c; path = "../vendor/spine-c2.1.25/src/spine/Skeleton.c"; sourceTree = "<group>"; };
-		52A0520D5F2B047FDA0FD04D /* spine-cocos2dx.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "spine-cocos2dx.cpp"; path = "../vendor/spine-c2.1.25/spine-cocos2dx.cpp"; sourceTree = "<group>"; };
 		55EF455049EE8EC2CED9A390 /* Animation.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Animation.c; path = "../vendor/spine-c2.1.25/src/spine/Animation.c"; sourceTree = "<group>"; };
 		606C44802E8F9832B59DEAC0 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
 		6E8134B4C5E6A7A677F4C2F4 /* Slot.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Slot.c; path = "../vendor/spine-c2.1.25/src/spine/Slot.c"; sourceTree = "<group>"; };
 		7745DD886B4526FAF0303BC8 /* EventData.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = EventData.c; path = "../vendor/spine-c2.1.25/src/spine/EventData.c"; sourceTree = "<group>"; };
 		77B4884A6BB3D1BCF09EE68A /* extension.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = extension.c; path = "../vendor/spine-c2.1.25/src/spine/extension.c"; sourceTree = "<group>"; };
+		80AEE48D74AE2DFFF99942CD /* spine-opengl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "spine-opengl.cpp"; path = "../vendor/spine-c2.1.25/spine-opengl.cpp"; sourceTree = "<group>"; };
 		86FC1887B7E01079CAF846C7 /* imgui.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = imgui.cpp; path = ../vendor/imgui/imgui.cpp; sourceTree = "<group>"; };
 		8D6BC6AA50D7885C8F7B2CEA /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		90D43DD5B29FEB07EF551415 /* glad.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = glad.c; path = ../vendor/glad/src/glad.c; sourceTree = "<group>"; };
@@ -197,8 +197,8 @@
 				3EFDE7431DA082B5D2828583 /* SkeletonRenderer.cpp */,
 				96B1496DA33BFBDF1E20C7AD /* SkeletonRenderer.h */,
 				F51342353961E7A77B892075 /* main.cpp */,
-				52A0520D5F2B047FDA0FD04D /* spine-cocos2dx.cpp */,
-				1AF08B370EEFD4A993DAE977 /* spine-cocos2dx.h */,
+				80AEE48D74AE2DFFF99942CD /* spine-opengl.cpp */,
+				256BE077E82C40E945611EB7 /* spine-opengl.h */,
 				03C652B9335821AB0E6560F9 /* src */,
 			);
 			name = "spine-c2.1.25";
@@ -374,7 +374,7 @@
 				86AC071739A210C98AC46D57 /* PolygonBatch.cpp in Sources */,
 				81A10FBB2916AB6DD1DBB5FB /* SkeletonRenderer.cpp in Sources */,
 				450660CDDD53467F0B9A470D /* main.cpp in Sources */,
-				DA9CF425C80486D764FE7A65 /* spine-cocos2dx.cpp in Sources */,
+				E47F14A597751E57E8977AE5 /* spine-opengl.cpp in Sources */,
 				C0432948733932FAC45B8F88 /* Animation.c in Sources */,
 				5057BE2AABA30E5C99D4F46A /* AnimationState.c in Sources */,
 				FF99959E1982F7D0D5090BDE /* AnimationStateData.c in Sources */,
