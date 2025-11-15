@@ -1,7 +1,7 @@
 
 workspace "SpineViewerProject"
     configurations { "Debug", "Release" }
-    location "build"
+    location "projects"
 
 spine_versions = { 
     "2.1.25", "2.1.08",

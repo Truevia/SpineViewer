@@ -32,7 +32,7 @@ jobs:
             echo "Building universal ${scheme}"
             build_dir="build/bin/Release-universal"
             xcodebuild \
-              -workspace build/SpineViewerProject.xcworkspace \
+              -workspace projects/SpineViewerProject.xcworkspace \
               -scheme "${scheme}" \
               -configuration Release \
               ARCHS="arm64 x86_64" \

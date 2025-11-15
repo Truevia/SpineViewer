@@ -8,7 +8,7 @@
 ```
 #macos
 premake5 --file=premake5.lua xcode4
-open build/SpineViewerProject.xcworkspace
+open projects/SpineViewerProject.xcworkspace
 ```
 
 Base on:
