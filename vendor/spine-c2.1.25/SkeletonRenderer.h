@@ -36,13 +36,6 @@ struct ColorRGBA {
 		: r(rVal), g(gVal), b(bVal), a(aVal) {}
 };
 
-struct BoundingBox {
-	float x = 0.0f;
-	float y = 0.0f;
-	float width = 0.0f;
-	float height = 0.0f;
-};
-
 /** Draws a skeleton using raw OpenGL. */
 class SkeletonRenderer {
 public:
@@ -65,7 +58,6 @@ public:
 
 	virtual void update (float deltaTime);
 	virtual void draw ();
-	virtual BoundingBox boundingBox () const;
 
 	void setPosition (const Vec2& position);
 	Vec2 getPosition () const;
@@ -115,17 +107,16 @@ protected:
 	GLuint getTexture (spSkinnedMeshAttachment* attachment) const;
 
 private:
-	bool ownsSkeletonData;
-	spAtlas* atlas;
-	std::unique_ptr<PolygonBatch> batch;
-	AttributeLocations attributeLocations;
-	float* worldVertices;
-	Vec2 position;
-	Vec2 scale;
-	ColorRGBA nodeColor;
-	float opacity;
-	BlendFunc blendFunc;
-	mutable std::vector<float> debugVertices;
+	bool _ownsSkeletonData;
+	spAtlas* _atlas;
+	std::unique_ptr<PolygonBatch> _batch;
+	AttributeLocations _attributeLocations;
+	mutable std::vector<float> _worldVertices;
+	Vec2 _position;
+	Vec2 _scale;
+	ColorRGBA _nodeColor;
+	float _opacity;
+	BlendFunc _blendFunc;
 	void initialize ();
 	void applyTransform (float* vertices, int verticesCount) const;
 };

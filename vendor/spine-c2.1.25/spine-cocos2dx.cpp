@@ -4,6 +4,8 @@
 #include <glad/glad.h>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
+#include <vector>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>

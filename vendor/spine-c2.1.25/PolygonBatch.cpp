@@ -15,8 +15,8 @@ PolygonBatch* PolygonBatch::createWithCapacity (int capacity) {
 
 PolygonBatch::PolygonBatch () :
     capacity(0),
-    vertices(nullptr), verticesCount(0),
-    triangles(nullptr), trianglesCount(0),
+    vertices(), verticesCount(0),
+    triangles(), trianglesCount(0),
     textureId(0),
     attributeLocations(),
     vao(0),
@@ -29,8 +29,8 @@ bool PolygonBatch::initWithCapacity (int capacity) {
     assert(capacity <= 10920 && "capacity cannot be > 10920");
     assert(capacity >= 0 && "capacity cannot be < 0");
     this->capacity = capacity;
-    vertices = (Vertex*)malloc(sizeof(Vertex) * capacity);
-    triangles = (GLushort*)malloc(sizeof(GLushort) * capacity * 3);
+    vertices.assign(capacity, Vertex{});
+    triangles.assign(capacity * 3, 0);
     glGenVertexArrays(1, &vao);
     glGenBuffers(1, &vbo);
     glGenBuffers(1, &ibo);
@@ -38,8 +38,6 @@ bool PolygonBatch::initWithCapacity (int capacity) {
 }
 
 PolygonBatch::~PolygonBatch () {
-    free(vertices);
-    free(triangles);
     if (vao) glDeleteVertexArrays(1, &vao);
     if (vbo) glDeleteBuffers(1, &vbo);
     if (ibo) glDeleteBuffers(1, &ibo);
@@ -54,37 +52,42 @@ void PolygonBatch::add (GLuint addTextureId,
         const int* addTriangles, int addTrianglesCount,
         const Color& color) {
 
-    if (
-        addTextureId != textureId
-        || verticesCount + (addVerticesCount >> 1) > capacity
-        || trianglesCount + addTrianglesCount > capacity * 3) {
-        this->flush();
+    assert((addVerticesCount & 1) == 0 && "Vertices array must contain pairs");
+    const int incomingVertices = addVerticesCount >> 1;
+    const bool textureChanged = addTextureId != textureId;
+    const bool capacityExceeded = (verticesCount + incomingVertices > capacity)
+        || (trianglesCount + addTrianglesCount > capacity * 3);
+    if (textureChanged || capacityExceeded) {
+        flush();
         textureId = addTextureId;
     }
 
-    for (int i = 0; i < addTrianglesCount; ++i, ++trianglesCount)
-        triangles[trianglesCount] = addTriangles[i] + verticesCount;
-
-    for (int i = 0; i < addVerticesCount; i += 2, ++verticesCount) {
-        Vertex* vertex = vertices + verticesCount;
-        vertex->vertices.x = addVertices[i];
-        vertex->vertices.y = addVertices[i + 1];
-        vertex->colors = color;
-        vertex->texCoords.u = uvs[i];
-        vertex->texCoords.v = uvs[i + 1];
+    const int baseVertex = verticesCount;
+    for (int i = 0; i < incomingVertices; ++i) {
+        Vertex &vertex = vertices[baseVertex + i];
+        vertex.vertices.x = addVertices[i * 2];
+        vertex.vertices.y = addVertices[i * 2 + 1];
+        vertex.colors = color;
+        vertex.texCoords.u = uvs[i * 2];
+        vertex.texCoords.v = uvs[i * 2 + 1];
     }
+    for (int i = 0; i < addTrianglesCount; ++i) {
+        triangles[trianglesCount + i] = static_cast<GLushort>(addTriangles[i] + baseVertex);
+    }
+    verticesCount += incomingVertices;
+    trianglesCount += addTrianglesCount;
 }
 
 void PolygonBatch::flush () {
-    if (!verticesCount || textureId == 0 || !vao || !vbo || !ibo) return;
+    if (!verticesCount || textureId == 0 || trianglesCount == 0 || !vao || !vbo || !ibo) return;
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textureId);
     glBindVertexArray(vao);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(Vertex), vertices, GL_STREAM_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(Vertex), vertices.data(), GL_STREAM_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, trianglesCount * sizeof(GLushort), triangles, GL_STREAM_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, trianglesCount * sizeof(GLushort), triangles.data(), GL_STREAM_DRAW);
 
     const GLsizei stride = sizeof(Vertex);
     glEnableVertexAttribArray(attributeLocations.position);
@@ -100,8 +103,6 @@ void PolygonBatch::flush () {
     glDisableVertexAttribArray(attributeLocations.color);
     glDisableVertexAttribArray(attributeLocations.texCoords);
     glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     verticesCount = 0;
     trianglesCount = 0;

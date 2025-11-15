@@ -75,6 +75,16 @@ static void renderSpine(SpineCocosApp &state);
 static void ensureOrthoProjection(int fbWidth, int fbHeight);
 static spine::BlendFunc blendFuncForState(bool premultipliedAlpha);
 static void applyRendererState(SpineCocosApp &state);
+static void syncRendererTransform(SpineCocosApp &state);
+static const char *selectGLSLVersion();
+static GLFWwindow *createMainWindow();
+static bool isWindowIconified(GLFWwindow *window);
+static void setupImGuiContext(GLFWwindow *window, const char *glsl_version);
+static void shutdownImGuiContext();
+static void renderControlPanel(ImVec4 &clear_color, ImGuiIO &io, SpineCocosApp &state);
+static float computeDeltaTime(double &lastTime);
+static bool extractDroppedPaths(int count, const char **paths, std::string &atlasPath, std::string &skeletonPath);
+static void configureImGuiStyle(float dpiScale);
 static GLuint compileShader(GLenum type, const char *source);
 static bool initSpineShader();
 static void destroySpineShader();
@@ -93,23 +103,17 @@ static void drop_callback(GLFWwindow * /*window*/, int count, const char **paths
     std::string atlasPath;
     std::string skeletonPath;
 
-    for (int i = 0; i < count; ++i) {
-        std::string file = paths[i];
-        if (file.find(".atlas") != std::string::npos) {
-            atlasPath = file;
-        } else if (file.find(".json") != std::string::npos || file.find(".skel") != std::string::npos) {
-            skeletonPath = file;
+    if (!extractDroppedPaths(count, paths, atlasPath, skeletonPath)) {
+        if (!atlasPath.empty() || !skeletonPath.empty()) {
+            std::cout << "Please drop both .atlas and .skel/.json files to load a complete Spine animation\n";
         }
+        return;
     }
 
-    if (!atlasPath.empty() && !skeletonPath.empty()) {
-        if (loadSpineAssets(g_spineApp, atlasPath, skeletonPath)) {
-            std::cout << "Spine animation loaded successfully\n";
-        } else {
-            std::cout << "Failed to load Spine animation\n";
-        }
-    } else if (!atlasPath.empty() || !skeletonPath.empty()) {
-        std::cout << "Please drop both .atlas and .skel/.json files to load a complete Spine animation\n";
+    if (loadSpineAssets(g_spineApp, atlasPath, skeletonPath)) {
+        std::cout << "Spine animation loaded successfully\n";
+    } else {
+        std::cout << "Failed to load Spine animation\n";
     }
 }
 
@@ -125,43 +129,12 @@ int main(int, char**)
     if (!glfwInit())
         return 1;
 
-    // Decide GL+GLSL versions
-#if defined(IMGUI_IMPL_OPENGL_ES2)
-    // GL ES 2.0 + GLSL 100 (WebGL 1.0)
-    const char* glsl_version = "#version 100";
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-#elif defined(IMGUI_IMPL_OPENGL_ES3)
-    // GL ES 3.0 + GLSL 300 es (WebGL 2.0)
-    const char* glsl_version = "#version 300 es";
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
-#elif defined(__APPLE__)
-    // GL 3.2 + GLSL 150
-    const char* glsl_version = "#version 150";
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // Required on Mac
-#else
-    // GL 3.0 + GLSL 130
-    const char* glsl_version = "#version 130";
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
-    //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
-#endif
+    const char* glsl_version = selectGLSLVersion();
 
-    // Create window with graphics context
     contentScale = ImGui_ImplGlfw_GetContentScaleForMonitor(glfwGetPrimaryMonitor());
-    GLFWwindow* window = glfwCreateWindow((int)(width * contentScale), (int)(height * contentScale), "SpineViewer", nullptr, nullptr);
-    if (window == nullptr)
+    GLFWwindow* window = createMainWindow();
+    if (!window)
         return 1;
-    glfwMakeContextCurrent(window);
-    glfwSetDropCallback(window, drop_callback);
-    glfwSetFramebufferSizeCallback(window, resizeViewport);
 
     glfwSwapInterval(1); // Enable vsync
     if (!gladLoadGL()) {
@@ -178,72 +151,22 @@ int main(int, char**)
     resetDefaultTransform(g_spineApp);
     ensureOrthoProjection((int)(width * contentScale), (int)(height * contentScale));
 
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    //ImGui::StyleColorsLight();
-
-    // Setup scaling
-    ImGuiStyle& style = ImGui::GetStyle();
-    style.ScaleAllSizes(contentScale);
-    style.FontScaleDpi = contentScale;
-
-    // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-#ifdef __EMSCRIPTEN__
-    ImGui_ImplGlfw_InstallEmscriptenCallbacks(window, "#canvas");
-#endif
-    ImGui_ImplOpenGL3_Init(glsl_version);
-
-    // Load Fonts
-    // - If no fonts are loaded, dear imgui will use the default font. You can also load multiple fonts and use ImGui::PushFont()/PopFont() to select them.
-    // - AddFontFromFileTTF() will return the ImFont* so you can store it if you need to select the font among multiple.
-    // - If the file cannot be loaded, the function will return a nullptr. Please handle those errors in your application (e.g. use an assertion, or display an error and quit).
-    // - Use '#define IMGUI_ENABLE_FREETYPE' in your imconfig file to use Freetype for higher quality font rendering.
-    // - Read 'docs/FONTS.md' for more instructions and details. If you like the default font but want it to scale better, consider using the 'ProggyVector' from the same author!
-    // - Remember that in C/C++ if you want to include a backslash \ in a string literal you need to write a double backslash \\ !
-    // - Our Emscripten build process allows embedding fonts to be accessible at runtime from the "fonts/" folder. See Makefile.emscripten for details.
-    //style.FontSizeBase = 20.0f;
-    //io.Fonts->AddFontDefault();
-    //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\segoeui.ttf");
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf");
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf");
-    //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf");
-    //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf");
-    //IM_ASSERT(font != nullptr);
+    setupImGuiContext(window, glsl_version);
+    ImGuiIO& io = ImGui::GetIO();
 
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-
     double lastTime = glfwGetTime();
-    // Main loop
+
 #ifdef __EMSCRIPTEN__
-    // For an Emscripten build we are disabling file-system access, so let's not attempt to do a fopen() of the imgui.ini file.
-    // You may manually call LoadIniSettingsFromMemory() to load settings from your own storage.
     io.IniFilename = nullptr;
     EMSCRIPTEN_MAINLOOP_BEGIN
 #else
     while (!glfwWindowShouldClose(window))
 #endif
     {
-        // Calculate the delta time in seconds
-        double currTime = glfwGetTime();
-        float delta = currTime - lastTime;
-        lastTime = currTime;
-
-        // Poll and handle events (inputs, window resize, etc.)
-        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+        float delta = computeDeltaTime(lastTime);
         glfwPollEvents();
-        if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0)
+        if (isWindowIconified(window))
         {
             ImGui_ImplGlfw_Sleep(10);
             continue;
@@ -251,81 +174,26 @@ int main(int, char**)
 
         updateSpine(g_spineApp, delta);
 
-        // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        renderControlPanel(clear_color, io, g_spineApp);
 
-        // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-        {
-            static bool scaleTogether = true;
-            ImGui::Begin("SpineViewer");
-            ImGui::Text("Runtime Version: %s", SPINE_VERSION_STRING);
-            bool premultChanged = ImGui::Checkbox("Premultiplied Alpha", &g_spineApp.premultipliedAlpha);
-            if (premultChanged) {
-                applyRendererState(g_spineApp);
-            }
-            ImGui::Checkbox("Link Scale", &scaleTogether);
-            if (scaleTogether) {
-                if (ImGui::DragFloat("Scale", &g_spineApp.scaleX, 0.01f, -5.0f, 5.0f)) {
-                    g_spineApp.scaleY = g_spineApp.scaleX;
-                }
-            } else {
-                ImGui::DragFloat("Scale X", &g_spineApp.scaleX, 0.01f, -5.0f, 5.0f);
-                ImGui::DragFloat("Scale Y", &g_spineApp.scaleY, 0.01f, -5.0f, 5.0f);
-            }
-
-            if (ImGui::DragFloat("Position X", &g_spineApp.posX, 1.0f, 0.0f, (float)width)) {}
-            if (ImGui::DragFloat("Position Y", &g_spineApp.posY, 1.0f, 0.0f, (float)height)) {}
-            ImGui::DragFloat("Time Scale", &g_spineApp.playbackSpeed, 0.01f, -3.0f, 3.0f);
-            ImGui::DragFloat("Asset Scale", &g_spineApp.assetScale, 0.01f, 0.01f, 5.0f);
-
-            const auto &animations = g_spineApp.animationNames;
-            if (ImGui::Checkbox("Loop", &g_spineApp.loop) && !animations.empty()) {
-                playAnimation(g_spineApp, g_spineApp.currentAnimation);
-            }
-            if (ImGui::ListBox("Animations", &g_spineApp.currentAnimation,
-                [](void *data, int idx, const char **out_text) {
-                    const auto &names = *static_cast<const std::vector<std::string> *>(data);
-                    if (idx < 0 || idx >= (int)names.size()) return false;
-                    *out_text = names[idx].c_str();
-                    return true;
-                }, (void *)&animations, (int)animations.size(), 6)) {
-                playAnimation(g_spineApp, g_spineApp.currentAnimation);
-            }
-
-            ImGui::ColorEdit4("Clear color", (float *)&clear_color);
-            ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-            ImGui::End();
-        }
-
-        // int display_w, display_h;
-        // glfwGetFramebufferSize(window, &display_w, &display_h);
-        // glViewport(0, 0, display_w, display_h);
         glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
-        
+
         renderSpine(g_spineApp);
 
-        // Rendering
         ImGui::Render();
-
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-
-
         glfwSwapBuffers(window);
     }
 #ifdef __EMSCRIPTEN__
     EMSCRIPTEN_MAINLOOP_END;
 #endif
 
-    // Cleanup
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-
+    shutdownImGuiContext();
     disposeSpine(g_spineApp);
     destroySpineShader();
     glfwDestroyWindow(window);
@@ -402,8 +270,7 @@ static bool loadSpineAssets(SpineCocosApp &state, const std::string &atlasPath, 
     if (state.posX == 0.0f && state.posY == 0.0f) {
         resetDefaultTransform(state);
     }
-    state.renderer->setPosition({state.posX, state.posY});
-    state.renderer->setScale({state.scaleX, state.scaleY});
+    syncRendererTransform(state);
     applyRendererState(state);
     state.stateData = spAnimationStateData_create(state.renderer->skeleton->data);
     state.state = spAnimationState_create(state.stateData);
@@ -443,8 +310,7 @@ static void renderSpine(SpineCocosApp &state) {
     glUniformMatrix4fv(g_uProjection, 1, GL_FALSE, g_projection);
     glActiveTexture(GL_TEXTURE0);
     glUniform1i(g_uTexture, 0);
-    state.renderer->setScale({state.scaleX, state.scaleY});
-    state.renderer->setPosition({state.posX, state.posY});
+    syncRendererTransform(state);
     applyRendererState(state);
     state.renderer->draw();
 }
@@ -570,4 +436,139 @@ static void destroySpineShader() {
         glDeleteProgram(g_spineShader);
         g_spineShader = 0;
     }
+}
+
+static void syncRendererTransform(SpineCocosApp &state) {
+    if (!state.renderer) return;
+    state.renderer->setScale({state.scaleX, state.scaleY});
+    state.renderer->setPosition({state.posX, state.posY});
+}
+
+static const char *selectGLSLVersion() {
+#if defined(IMGUI_IMPL_OPENGL_ES2)
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+    return "#version 100";
+#elif defined(IMGUI_IMPL_OPENGL_ES3)
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_ES_API);
+    return "#version 300 es";
+#elif defined(__APPLE__)
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    return "#version 150";
+#else
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+    return "#version 130";
+#endif
+}
+
+static GLFWwindow *createMainWindow() {
+    GLFWwindow *window = glfwCreateWindow((int)(width * contentScale), (int)(height * contentScale), "SpineViewer", nullptr, nullptr);
+    if (!window) return nullptr;
+    glfwMakeContextCurrent(window);
+    glfwSetDropCallback(window, drop_callback);
+    glfwSetFramebufferSizeCallback(window, resizeViewport);
+    return window;
+}
+
+static bool isWindowIconified(GLFWwindow *window) {
+    return glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0;
+}
+
+static void configureImGuiStyle(float dpiScale) {
+    ImGui::StyleColorsDark();
+    ImGuiStyle &style = ImGui::GetStyle();
+    style.ScaleAllSizes(dpiScale);
+    style.FontScaleDpi = dpiScale;
+}
+
+static void setupImGuiContext(GLFWwindow *window, const char *glsl_version) {
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO &io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;
+
+    configureImGuiStyle(contentScale);
+
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+#ifdef __EMSCRIPTEN__
+    ImGui_ImplGlfw_InstallEmscriptenCallbacks(window, "#canvas");
+#endif
+    ImGui_ImplOpenGL3_Init(glsl_version);
+}
+
+static void shutdownImGuiContext() {
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+}
+
+static void renderControlPanel(ImVec4 &clear_color, ImGuiIO &io, SpineCocosApp &state) {
+    static bool scaleTogether = true;
+
+    ImGui::Begin("SpineViewer");
+    ImGui::Text("Runtime Version: %s", SPINE_VERSION_STRING);
+    if (ImGui::Checkbox("Premultiplied Alpha", &state.premultipliedAlpha)) {
+        applyRendererState(state);
+    }
+    ImGui::Checkbox("Link Scale", &scaleTogether);
+    if (scaleTogether) {
+        if (ImGui::DragFloat("Scale", &state.scaleX, 0.01f, -5.0f, 5.0f)) {
+            state.scaleY = state.scaleX;
+        }
+    } else {
+        ImGui::DragFloat("Scale X", &state.scaleX, 0.01f, -5.0f, 5.0f);
+        ImGui::DragFloat("Scale Y", &state.scaleY, 0.01f, -5.0f, 5.0f);
+    }
+
+    ImGui::DragFloat("Position X", &state.posX, 1.0f, 0.0f, (float)width);
+    ImGui::DragFloat("Position Y", &state.posY, 1.0f, 0.0f, (float)height);
+    ImGui::DragFloat("Time Scale", &state.playbackSpeed, 0.01f, -3.0f, 3.0f);
+    ImGui::DragFloat("Asset Scale", &state.assetScale, 0.01f, 0.01f, 5.0f);
+
+    const auto &animations = state.animationNames;
+    if (ImGui::Checkbox("Loop", &state.loop) && !animations.empty()) {
+        playAnimation(state, state.currentAnimation);
+    }
+    if (ImGui::ListBox("Animations", &state.currentAnimation,
+        [](void *data, int idx, const char **out_text) {
+            const auto &names = *static_cast<const std::vector<std::string> *>(data);
+            if (idx < 0 || idx >= (int)names.size()) return false;
+            *out_text = names[idx].c_str();
+            return true;
+        }, (void *)&animations, (int)animations.size(), 6)) {
+        playAnimation(state, state.currentAnimation);
+    }
+
+    ImGui::ColorEdit4("Clear color", (float *)&clear_color);
+    ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+    ImGui::Text("Drag (.json+.atlas or .skel+atlas ) to load a Spine animation");
+    ImGui::End();
+}
+
+static float computeDeltaTime(double &lastTime) {
+    double currTime = glfwGetTime();
+    float delta = static_cast<float>(currTime - lastTime);
+    lastTime = currTime;
+    return delta;
+}
+
+static bool extractDroppedPaths(int count, const char **paths, std::string &atlasPath, std::string &skeletonPath) {
+    for (int i = 0; i < count; ++i) {
+        const std::string file = paths[i];
+        if (file.find(".atlas") != std::string::npos) {
+            atlasPath = file;
+        } else if (file.find(".json") != std::string::npos || file.find(".skel") != std::string::npos) {
+            skeletonPath = file;
+        }
+    }
+
+    return !atlasPath.empty() && !skeletonPath.empty();
 }
