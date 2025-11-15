@@ -22,43 +22,53 @@ jobs:
       - name: Generate Xcode workspace
         run: premake5 --file=premake5.lua xcode4
 
-      - name: Build every SpineViewer target
+      - name: Build every SpineViewer target (arm64 + x86_64)
         run: |
           set -euo pipefail
           versions=("2.1.25" "2.1.08" "4.2" "3.7.94" "3.7" "3.8" "3.6.53")
+          archs=("arm64" "x86_64")
           mkdir -p artifacts
           for version in "${versions[@]}"; do
             scheme="SpineViewer${version}"
-            echo "Building ${scheme}"
-            xcodebuild \
-              -workspace build/SpineViewerProject.xcworkspace \
-              -scheme "${scheme}" \
-              -configuration Release \
-              -derivedDataPath build/derived \
-              build
-            candidates=(
-              "build/bin/Release/${scheme}"
-              "build/bin/Release/${scheme}.app"
-              "build/derived/Build/Products/Release/${scheme}"
-              "build/derived/Build/Products/Release/${scheme}.app"
-            )
-            copied=false
-            for candidate in "${candidates[@]}"; do
-              if [ -d "${candidate}" ]; then
-                cp -R "${candidate}" "artifacts/${scheme}.app"
-                copied=true
-                break
-              elif [ -f "${candidate}" ]; then
-                cp "${candidate}" "artifacts/${scheme}"
-                copied=true
-                break
+            for arch in "${archs[@]}"; do
+              echo "Building ${scheme} for ${arch}"
+              build_dir="build/bin/Release-${arch}"
+              xcodebuild \
+                -workspace build/SpineViewerProject.xcworkspace \
+                -scheme "${scheme}" \
+                -configuration Release \
+                -arch "${arch}" \
+                ARCHS="${arch}" \
+                ONLY_ACTIVE_ARCH=NO \
+                CONFIGURATION_BUILD_DIR="${build_dir}" \
+                -derivedDataPath build/derived \
+                build
+              candidates=(
+                "${build_dir}/${scheme}"
+                "${build_dir}/${scheme}.app"
+                "build/derived/Build/Products/Release/${scheme}"
+                "build/derived/Build/Products/Release/${scheme}.app"
+              )
+              copied=false
+              target_dir="artifacts/${scheme}/${arch}"
+              mkdir -p "${target_dir}"
+              for candidate in "${candidates[@]}"; do
+                if [ -d "${candidate}" ]; then
+                  cp -R "${candidate}" "${target_dir}/"
+                  copied=true
+                  break
+                elif [ -f "${candidate}" ]; then
+                  cp "${candidate}" "${target_dir}/"
+                  copied=true
+                  break
+                fi
+              done
+              if [ "${copied}" != true ]; then
+                echo "Unable to locate build product for ${scheme} (${arch})" >&2
+                find build -maxdepth 4 -type d -name "Release*" -print || true
+                exit 1
               fi
             done
-            if [ "${copied}" != true ]; then
-              echo "Unable to locate build product for ${scheme}" >&2
-              find build -maxdepth 3 -type d -name Release -print || true
-              exit 1
-            fi
           done
 
       - name: Create archive
