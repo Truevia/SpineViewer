@@ -249,9 +249,14 @@ static bool loadSpineAssets(SpineCocosApp &state, const std::string &atlasPath, 
         }
         spSkeletonJson_dispose(json);
     } else if (endsWith(skeletonPath, ".skel")) {
-        fprintf(stderr, "Binary .skel loading is not supported by the Spine %s runtime. Please export JSON instead.\n", SPINE_VERSION_STRING);
-        spAtlas_dispose(atlas);
-        return false;
+        spSkeletonBinary *binary = spSkeletonBinary_create(atlas);
+        binary->scale = state.assetScale;
+        skeletonData = spSkeletonBinary_readSkeletonDataFile(binary, skeletonPath.c_str());
+        if (!skeletonData) {
+            const char *error = binary->error ? binary->error : "unknown error";
+            fprintf(stderr, "Error reading binary skeleton %s: %s\n", skeletonPath.c_str(), error);
+        }
+        spSkeletonBinary_dispose(binary);
     } else {
         fprintf(stderr, "Unknown skeleton file format: %s\n", skeletonPath.c_str());
         spAtlas_dispose(atlas);

@@ -1,0 +1,147 @@
+#pragma once
+
+#include <memory>
+#include <vector>
+
+#include <spine/spine.h>
+#include "PolygonBatch.h"
+
+struct spAtlas;
+struct spAttachment;
+struct spBone;
+struct spMeshAttachment;
+struct spRegionAttachment;
+struct spSkeleton;
+struct spSkeletonClipping;
+struct spSkeletonData;
+struct spSlot;
+struct spVertexEffect;
+
+namespace spine {
+
+struct Texture {
+	GLuint id = 0;
+	int width = 0;
+	int height = 0;
+};
+
+struct BlendFunc {
+	GLenum src = GL_ONE;
+	GLenum dst = GL_ONE_MINUS_SRC_ALPHA;
+
+	BlendFunc() = default;
+	BlendFunc(GLenum srcFactor, GLenum dstFactor) : src(srcFactor), dst(dstFactor) {}
+};
+
+struct Vec2 {
+	float x = 0.0f;
+	float y = 0.0f;
+	Vec2() = default;
+	Vec2(float xVal, float yVal) : x(xVal), y(yVal) {}
+};
+
+struct ColorRGBA {
+	float r = 1.0f;
+	float g = 1.0f;
+	float b = 1.0f;
+	float a = 1.0f;
+	ColorRGBA() = default;
+	ColorRGBA(float rVal, float gVal, float bVal, float aVal)
+		: r(rVal), g(gVal), b(bVal), a(aVal) {}
+};
+
+/** Draws a skeleton using raw OpenGL. */
+class SkeletonRenderer {
+public:
+	spSkeleton* skeleton;
+	spBone* rootBone;
+	float timeScale;
+	bool debugSlots;
+	bool debugBones;
+	bool premultipliedAlpha;
+
+	static SkeletonRenderer* createWithData (spSkeletonData* skeletonData, bool ownsSkeletonData = false);
+	static SkeletonRenderer* createWithFile (const char* skeletonDataFile, spAtlas* atlas, float scale = 0);
+	static SkeletonRenderer* createWithFile (const char* skeletonDataFile, const char* atlasFile, float scale = 0);
+
+	SkeletonRenderer (spSkeletonData* skeletonData, bool ownsSkeletonData = false);
+	SkeletonRenderer (const char* skeletonDataFile, spAtlas* atlas, float scale = 0);
+	SkeletonRenderer (const char* skeletonDataFile, const char* atlasFile, float scale = 0);
+
+	virtual ~SkeletonRenderer ();
+
+	virtual void update (float deltaTime);
+	virtual void draw ();
+
+	void setPosition (const Vec2& position);
+	Vec2 getPosition () const;
+	void setScale (const Vec2& scale);
+	float getScaleX () const;
+	float getScaleY () const;
+	void setColor (const ColorRGBA& color);
+	ColorRGBA getColor () const;
+	void setOpacity (float opacity);
+	float getOpacity () const;
+	void setBlendFunc (const BlendFunc& blend);
+	BlendFunc getBlendFunc () const;
+	void setAttributeLocations (const AttributeLocations& locations);
+	const AttributeLocations& getAttributeLocations () const;
+
+	// --- Convenience methods for common Skeleton_* functions.
+	void updateWorldTransform ();
+
+	void setToSetupPose ();
+	void setBonesToSetupPose ();
+	void setSlotsToSetupPose ();
+
+	/* Returns 0 if the bone was not found. */
+	spBone* findBone (const char* boneName) const;
+	/* Returns 0 if the slot was not found. */
+	spSlot* findSlot (const char* slotName) const;
+	
+	/* Sets the skin used to look up attachments not found in the SkeletonData defaultSkin. Attachments from the new skin are
+	 * attached if the corresponding attachment from the old skin was attached. If there was no old skin, each slot's setup mode
+	 * attachment is attached from the new skin. Returns false if the skin was not found.
+	 * @param skin May be 0.*/
+	bool setSkin (const char* skinName);
+
+	/* Returns 0 if the slot or attachment was not found. */
+	spAttachment* getAttachment (const char* slotName, const char* attachmentName) const;
+	/* Returns false if the slot or attachment was not found. */
+	bool setAttachment (const char* slotName, const char* attachmentName);
+
+	void setOpacityModifyRGB (bool value);
+	bool isOpacityModifyRGB () const;
+	void setVertexEffect (spVertexEffect* effect);
+	spVertexEffect* getVertexEffect () const;
+	void setSlotsRange (int startSlotIndex, int endSlotIndex);
+
+protected:
+	SkeletonRenderer ();
+	void setSkeletonData (spSkeletonData* skeletonData, bool ownsSkeletonData);
+	GLuint getTexture (spRegionAttachment* attachment) const;
+	GLuint getTexture (spMeshAttachment* attachment) const;
+
+private:
+	bool _ownsSkeletonData;
+	spAtlas* _atlas;
+	std::unique_ptr<PolygonBatch> _batch;
+	AttributeLocations _attributeLocations;
+	mutable std::vector<float> _worldVertices;
+	mutable std::vector<float> _uvBuffer;
+	mutable std::vector<Color> _colorBuffer;
+	spSkeletonClipping* _clipper = nullptr;
+	spVertexEffect* _vertexEffect = nullptr;
+	int _startSlotIndex = -1;
+	int _endSlotIndex = -1;
+	Vec2 _position;
+	Vec2 _scale;
+	ColorRGBA _nodeColor;
+	float _opacity;
+	BlendFunc _blendFunc;
+	void initialize ();
+	void applyTransform (float* vertices, int verticesCount) const;
+	void ensureWorldVerticesCapacity (size_t floatsCount);
+};
+
+}

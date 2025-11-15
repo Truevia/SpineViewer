@@ -249,7 +249,7 @@ static bool loadSpineAssets(SpineCocosApp &state, const std::string &atlasPath, 
         }
         spSkeletonJson_dispose(json);
     } else if (endsWith(skeletonPath, ".skel")) {
-        fprintf(stderr, "Binary .skel loading is not supported by the Spine 2.1.25 runtime. Please export JSON instead.\n");
+        fprintf(stderr, "Binary .skel loading is not supported by the Spine %s runtime. Please export JSON instead.\n", SPINE_VERSION_STRING);
         spAtlas_dispose(atlas);
         return false;
     } else {
