@@ -31,24 +31,31 @@ jobs:
             scheme="SpineViewer${version}"
             echo "Building universal ${scheme}"
             build_dir="build/bin/Release-universal"
+            build_dir_abs="${PWD}/${build_dir}"
+            derived_dir="build/derived"
+            derived_dir_abs="${PWD}/${derived_dir}"
+            mkdir -p "${build_dir_abs}"
+            mkdir -p "${derived_dir_abs}"
             xcodebuild \
               -workspace projects/SpineViewerProject.xcworkspace \
               -scheme "${scheme}" \
               -configuration Release \
               ARCHS="arm64 x86_64" \
               ONLY_ACTIVE_ARCH=NO \
-              CONFIGURATION_BUILD_DIR="${build_dir}" \
-              -derivedDataPath build/derived \
+              CONFIGURATION_BUILD_DIR="${build_dir_abs}" \
+              -derivedDataPath "${derived_dir_abs}" \
               build
             echo "--- Contents of ${build_dir} ---"
             ls -al "${build_dir}" || true
             echo "--- Contents of derived Release products ---"
-            ls -al build/derived/Build/Products/Release || true
+            # ls -al "${derived_dir}/Build/Products/Release" || true
             candidates=(
               "${build_dir}/${scheme}"
               "${build_dir}/${scheme}.app"
-              "build/derived/Build/Products/Release/${scheme}"
-              "build/derived/Build/Products/Release/${scheme}.app"
+              "${derived_dir}/Build/Products/Release/${scheme}"
+              "${derived_dir}/Build/Products/Release/${scheme}.app"
+              "${derived_dir}/Build/Products/Release-universal/${scheme}"
+              "${derived_dir}/Build/Products/Release-universal/${scheme}.app"
             )
             copied=false
             target_dir="artifacts/${scheme}"
@@ -70,6 +77,8 @@ jobs:
               echo "Unable to locate build product for ${scheme}" >&2
                 echo "Listing build/bin recursively for diagnostics"
                 ls -R build/bin || true
+                echo "Listing derived build outputs"
+                ls -R "${derived_dir}" || true
               find build -maxdepth 4 -type d -name "Release*" -print || true
               exit 1
             fi
