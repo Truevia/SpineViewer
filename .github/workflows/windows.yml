@@ -14,22 +14,37 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install Visual Studio 2019 Build Tools
+        shell: pwsh
+        run: |
+          $ProgressPreference = 'SilentlyContinue'
+          choco install visualstudio2019buildtools --yes --no-progress --package-parameters "--add Microsoft.VisualStudio.Workload.NativeDesktop"
+
       - name: Generate Visual Studio solution
         shell: pwsh
         run: |
           $premake = Join-Path "$env:GITHUB_WORKSPACE" "tools/premake5.exe"
           & $premake --file=premake5.lua vs2019
 
-      - name: Build every SpineViewer target (Release x64)
+      - name: Build every SpineViewer target (Release Win32)
         shell: pwsh
         run: |
           $ErrorActionPreference = "Stop"
           $versions = @("2.1.25", "2.1.08", "4.2", "3.7.94", "3.7", "3.8", "3.6.53")
           $solution = "projects/SpineViewerProject.sln"
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} "Microsoft Visual Studio/Installer/vswhere.exe"
+          if (!(Test-Path $vswhere)) {
+            throw "vswhere.exe not found at $vswhere"
+          }
+          $msbuildPath = & $vswhere -latest -requires Microsoft.Component.MSBuild -find "MSBuild\\Current\\Bin\\MSBuild.exe" | Select-Object -First 1
+          if ([string]::IsNullOrWhiteSpace($msbuildPath)) {
+            throw "Unable to locate MSBuild via vswhere"
+          }
+          $msbuildPath = $msbuildPath.Trim()
           foreach ($version in $versions) {
             $project = "SpineViewer$version"
             Write-Host "Building $project"
-            msbuild $solution /m /p:Configuration=Release /p:Platform=x64 /t:$project
+            & $msbuildPath $solution /m /p:Configuration=Release /p:Platform=Win32 /t:$project
           }
 
       - name: Collect build artifacts
