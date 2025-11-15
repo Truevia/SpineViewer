@@ -3,7 +3,7 @@ workspace "SpineViewerProject"
     configurations { "Debug", "Release" }
     location "build"
 
-spine_versions = { "3.7", "3.8", "4.2", "2.1.25", "2.1.08" }
+spine_versions = { "3.7.94", "3.7", "3.8", "4.2", "2.1.25", "2.1.08" }
 for k,version in ipairs(spine_versions) do
 
     project_name = "SpineViewer" .. version
