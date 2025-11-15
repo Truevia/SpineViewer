@@ -15,8 +15,6 @@ for k,version in ipairs(spine_versions) do
     project_name = "SpineViewer" .. version
     print(project_name)
     project (project_name)
-        -- kind "ConsoleApp"
-        kind "WindowedApp"
         local bundle_identifier = "com.trve." .. project_name
 
         language "C++"
@@ -86,7 +84,9 @@ for k,version in ipairs(spine_versions) do
                 PRODUCT_BUNDLE_IDENTIFIER = bundle_identifier,
                 MACOSX_DEPLOYMENT_TARGET = macos_deployment_target,
             }
+            kind "WindowedApp"
         filter "system:windows"
+            kind "ConsoleApp"
             includedirs { "vendor/glfw/win32/include" }
             libdirs { "vendor/glfw/win32/lib-vc2019" }
             links { "glfw3.lib", "opengl32.lib", "gdi32.lib", "user32.lib", "shell32.lib" }
