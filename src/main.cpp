@@ -307,6 +307,7 @@ int main(int, char**)
             }
             ImGui::ColorEdit4("clear color", (float*)&clear_color); // Edit 3 floats representing a color
             ImGui::Text("%.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+            ImGui::Text("Drag (.json+.atlas or .skel+atlas ) to load a Spine animation");
             ImGui::End();
         }
 
