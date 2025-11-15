@@ -86,6 +86,12 @@ for k,version in ipairs(spine_versions) do
                 PRODUCT_BUNDLE_IDENTIFIER = bundle_identifier,
                 MACOSX_DEPLOYMENT_TARGET = macos_deployment_target,
             }
+        filter "system:windows"
+            includedirs { "vendor/glfw/win32/include" }
+            libdirs { "vendor/glfw/win32/lib-vc2019" }
+            links { "glfw3.lib", "opengl32.lib", "gdi32.lib", "user32.lib", "shell32.lib" }
+
+        filter {}
         defines { "GLFW_INCLUDE_NONE", "IMGUI_IMPL_OPENGL_LOADER_CUSTOM" }
 
         -- glad
