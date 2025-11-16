@@ -35,6 +35,16 @@
 #include "../libs/emscripten/emscripten_mainloop_stub.h"
 #endif
 
+#ifdef _WIN32
+#include <windows.h>
+extern int main(int argc, char** argv);
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
+    int argc = __argc;
+    char** argv = __argv;
+    return main(argc, argv);
+}
+#endif
+
 int width = 800, height = 600;
 renderer_t *g_renderer = nullptr;
 SpineManager *g_spineManager = nullptr;
