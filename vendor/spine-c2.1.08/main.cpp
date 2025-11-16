@@ -326,27 +326,27 @@ static void renderSpine(SpineCocosApp &state) {
 }
 
 static void ensureOrthoProjection(int fbWidth, int fbHeight) {
-    const float left = 0.0f;
-    const float right = (float)fbWidth;
-    const float top = 0.0f;
-    const float bottom = (float)fbHeight;
-    const float near = -1.0f;
-    const float far = 1.0f;
-    g_projection[0] = 2.0f / (right - left);
+    const float left_ = 0.0f;
+    const float right_ = (float)fbWidth;
+    const float top_ = 0.0f;
+    const float bottom_ = (float)fbHeight;
+    const float near_ = -1.0f;
+    const float far_ = 1.0f;
+    g_projection[0] = 2.0f / (right_ - left_);
     g_projection[1] = 0.0f;
     g_projection[2] = 0.0f;
     g_projection[3] = 0.0f;
     g_projection[4] = 0.0f;
-    g_projection[5] = 2.0f / (top - bottom);
+    g_projection[5] = 2.0f / (top_ - bottom_);
     g_projection[6] = 0.0f;
     g_projection[7] = 0.0f;
     g_projection[8] = 0.0f;
     g_projection[9] = 0.0f;
-    g_projection[10] = -2.0f / (far - near);
+    g_projection[10] = -2.0f / (far_ - near_);
     g_projection[11] = 0.0f;
-    g_projection[12] = -(right + left) / (right - left);
-    g_projection[13] = -(top + bottom) / (top - bottom);
-    g_projection[14] = -(far + near) / (far - near);
+    g_projection[12] = -(right_ + left_) / (right_ - left_);
+    g_projection[13] = -(top_ + bottom_) / (top_ - bottom_);
+    g_projection[14] = -(far_ + near_) / (far_ - near_);
     g_projection[15] = 1.0f;
 }
 
