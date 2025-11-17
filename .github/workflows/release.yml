@@ -6,18 +6,27 @@ on:
       - '*'
   workflow_dispatch:
 
+env:
+  SPINE_VERSIONS: "2.1.25 2.1.08 4.2 3.7.94 3.7 3.8 3.6.53"
+
 jobs:
   build_macos:
     uses: ./.github/workflows/macos.yml
     secrets: inherit
+    with:
+      versions: ${{ env.SPINE_VERSIONS }}
 
   build_windows:
     uses: ./.github/workflows/windows.yml
     secrets: inherit
+    with:
+      versions: ${{ env.SPINE_VERSIONS }}
 
   build_linux:
     uses: ./.github/workflows/linux.yml
     secrets: inherit
+    with:
+      versions: ${{ env.SPINE_VERSIONS }}
 
   publish:
     runs-on: ubuntu-latest
