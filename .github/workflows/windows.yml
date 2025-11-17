@@ -1,10 +1,8 @@
 name: Build SpineViewer Windows binaries
 
 on:
-  push:
-    tags:
-      - '*'
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   build:

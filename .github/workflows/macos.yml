@@ -1,10 +1,8 @@
-name: Build SpineViewer binaries
+name: Build SpineViewer macos
 
 on:
-  push:
-    tags:
-      - '*'
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   build:
@@ -87,11 +85,11 @@ jobs:
       - name: Create archive
         run: |
           cd artifacts
-          zip -r ../SpineViewer-binaries.zip .
+          zip -r ../SpineViewer-macos.zip .
 
-      - name: Upload binaries
+      - name: Upload macos
         uses: actions/upload-artifact@v4
         with:
-          name: spineviewer-binaries
-          path: SpineViewer-binaries.zip
+          name: spineviewer-macos
+          path: SpineViewer-macos.zip
           if-no-files-found: error
