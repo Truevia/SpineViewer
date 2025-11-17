@@ -20,6 +20,8 @@ jobs:
           sudo apt-get install -y \
             build-essential \
             pkg-config \
+            cmake \
+            unzip \
             libgl1-mesa-dev \
             libglu1-mesa-dev \
             libx11-dev \
@@ -28,13 +30,26 @@ jobs:
             libxcursor-dev \
             libxi-dev \
             libxxf86vm-dev \
-            libglfw3-dev \
             zip
 
       - name: Prepare Premake binary
         run: |
           set -euo pipefail
           chmod +x tools/premake5.linux
+
+      - name: Build and install GLFW 3.4 from source
+        run: |
+          set -euo pipefail
+          curl -L -o glfw.zip https://github.com/glfw/glfw/releases/download/3.4/glfw-3.4.zip
+          unzip -q glfw.zip -d /tmp
+          cmake -S /tmp/glfw-3.4 -B /tmp/glfw-build \
+            -DBUILD_SHARED_LIBS=OFF \
+            -DGLFW_BUILD_EXAMPLES=OFF \
+            -DGLFW_BUILD_TESTS=OFF \
+            -DGLFW_BUILD_DOCS=OFF
+          cmake --build /tmp/glfw-build --config Release -j"$(nproc)"
+          sudo cmake --install /tmp/glfw-build
+          rm -rf glfw.zip /tmp/glfw-3.4 /tmp/glfw-build
 
       - name: Generate GNU Makefiles
         run: tools/premake5.linux --file=premake5.lua gmake2
