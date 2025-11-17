@@ -30,6 +30,7 @@ jobs:
             libxcursor-dev \
             libxi-dev \
             libxxf86vm-dev \
+            wayland-protocols \
             zip
 
       - name: Prepare Premake binary
