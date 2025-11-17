@@ -31,18 +31,13 @@ jobs:
             libglfw3-dev \
             zip
 
-      - name: Install Premake5
+      - name: Prepare Premake binary
         run: |
           set -euo pipefail
-          PREMAKE_VERSION="5.0.0-beta2"
-          curl -L -o premake.tar.gz "https://github.com/premake/premake-core/releases/download/${PREMAKE_VERSION}/premake-${PREMAKE_VERSION}-linux.tar.gz"
-          tar -xzf premake.tar.gz -C /tmp
-          sudo mv /tmp/premake5 /usr/local/bin/premake5
-          sudo chmod +x /usr/local/bin/premake5
-          rm premake.tar.gz
+          chmod +x tools/premake5.linux
 
       - name: Generate GNU Makefiles
-        run: premake5 --file=premake5.lua gmake2
+        run: tools/premake5.linux --file=premake5.lua gmake2
 
       - name: Build every SpineViewer target (Release)
         run: |
